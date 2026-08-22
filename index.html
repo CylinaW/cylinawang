@@ -78,6 +78,44 @@ body{background:var(--paper);color:var(--ink-2);font-family:var(--mono);font-siz
 .ct-foot{font-size:11px;color:var(--ink-4);letter-spacing:.06em;margin-top:24px;opacity:.55}
 .rv{opacity:0;transform:translateY(8px);transition:opacity .44s ease,transform .44s ease}
 .rv.in{opacity:1;transform:none}
+@media (max-width: 768px) {
+  html, body { height: auto; overflow: auto; cursor: auto; }
+  #cur { display: none; }
+  #neuro { display: none; }
+
+  .layout {
+    display: block;
+    height: auto;
+  }
+
+  .left {
+    border-right: none;
+    border-bottom: 1px solid var(--rule);
+    padding: 28px 22px 24px;
+    position: static;
+    background: var(--paper);
+  }
+
+  .l-name { font-size: 19px; margin-bottom: 18px; }
+  .l-facts { margin-bottom: 22px; }
+  .l-nav { margin-bottom: 14px; }
+  .l-hint, #calmBtn { display: none; }
+
+  #pixel-girl { margin: 16px auto 12px; }
+
+  .right { overflow: visible; }
+  .right-inner {
+    padding: 32px 22px 60px;
+    max-width: 100%;
+  }
+
+  .sec { margin-bottom: 48px; }
+
+  /* long honor lines wrap cleanly */
+  .hon { flex-wrap: wrap; }
+  .hon-n { flex: 1 1 100%; }
+  .hon-y { flex: 0 0 auto; margin-top: 2px; }
+}
 </style>
 </head>
 <body>
@@ -601,16 +639,19 @@ render();
 // nav active state
 const rightCol=document.getElementById('rightCol');
 const navLinks=document.querySelectorAll('.l-nav a');
+const isMobile = window.matchMedia('(max-width: 768px)').matches;
+const scrollRoot = isMobile ? null : rightCol;
+
 document.querySelectorAll('.sec').forEach(s=>
   new IntersectionObserver(entries=>entries.forEach(e=>{
     if(e.isIntersecting) navLinks.forEach(a=>a.classList.toggle('act',a.dataset.s===e.target.id));
-  }),{root:rightCol,threshold:.3}).observe(s)
+  }),{root:scrollRoot,threshold:.3}).observe(s)
 );
 
 // reveal on scroll
 const ro=new IntersectionObserver(entries=>entries.forEach(e=>{
   if(e.isIntersecting){e.target.classList.add('in');ro.unobserve(e.target);}
-}),{root:rightCol,threshold:.06});
+},{root:scrollRoot,threshold:.06}));
 document.querySelectorAll('.rv').forEach(el=>{
   ro.observe(el);
   if(el.getBoundingClientRect().top<innerHeight) el.classList.add('in');
